@@ -26,7 +26,7 @@ var SSL_ROOTS_PATH = path.resolve(__dirname, 'deps', 'grpc', 'etc', 'roots.pem')
 
 var _ = require('lodash');
 
-var ProtoBuf = require('protobufjs');
+var ProtoBuf = require('@elastisim/protobufjs');
 
 var client = require('./src/client.js');
 

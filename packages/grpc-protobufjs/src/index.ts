@@ -49,6 +49,10 @@ export interface PackageDefinition {
 
 export type Options = Protobuf.IParseOptions & Protobuf.IConversionOptions & {
   includeDirs?: string[];
+  resolvedTypes?: { [key:string]: {
+    serialize:Serialize<object>,
+    deserialize:Deserialize<object>
+  }}
 };
 
 function joinName(baseName: string, name: string): string {
@@ -88,14 +92,46 @@ function createSerializer(cls: Protobuf.Type): Serialize<object> {
 }
 
 function createMethodDefinition(method: Protobuf.Method, serviceName: string, options: Options): MethodDefinition<object, object> {
+  var requestSerialize:Serialize<object>;
+  var requestDeserialize:Deserialize<object>;
+  var responseSerialize:Serialize<object>;
+  var responseDeserialize:Deserialize<object>;
+
+  var requestType:string = (method.resolvedRequestType as Protobuf.Type).fullName;
+  requestType = requestType.substr(1);
+  var responseType:string = (method.resolvedResponseType as Protobuf.Type).fullName;
+  responseType = responseType.substr(1);
+
+  if (options && options.resolvedTypes && options.resolvedTypes[requestType]) {
+    requestSerialize = options.resolvedTypes[requestType].serialize;
+    requestDeserialize = options.resolvedTypes[requestType].deserialize;
+  }
+  else {
+    console.error(method.name + " has bad request type " + requestType + " or options not properly configured");
+    process.exit(0);
+    requestSerialize = createSerializer(method.resolvedRequestType as Protobuf.Type);
+    requestDeserialize = createDeserializer(method.resolvedRequestType as Protobuf.Type, options)
+  }
+
+  if (options && options.resolvedTypes && options.resolvedTypes[responseType]) {
+    responseSerialize = options.resolvedTypes[responseType].serialize;
+    responseDeserialize = options.resolvedTypes[responseType].deserialize;
+  }
+  else {
+    console.error(method.name + " has bad response type " + responseType + " or options not properly configured");
+    process.exit(0);
+    responseSerialize = createSerializer(method.resolvedResponseType as Protobuf.Type);
+    responseDeserialize = createDeserializer(method.resolvedResponseType as Protobuf.Type, options);
+  }
+
   return {
     path: '/' + serviceName + '/' + method.name,
     requestStream: !!method.requestStream,
     responseStream: !!method.responseStream,
-    requestSerialize: createSerializer(method.resolvedRequestType as Protobuf.Type),
-    requestDeserialize: createDeserializer(method.resolvedRequestType as Protobuf.Type, options),
-    responseSerialize: createSerializer(method.resolvedResponseType as Protobuf.Type),
-    responseDeserialize: createDeserializer(method.resolvedResponseType as Protobuf.Type, options),
+    requestSerialize: requestSerialize,
+    requestDeserialize: requestDeserialize,
+    responseSerialize: responseSerialize,
+    responseDeserialize: responseDeserialize,
     // TODO(murgatroid99): Find a better way to handle this
     originalName: _.camelCase(method.name)
   };

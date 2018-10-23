@@ -1,5 +1,5 @@
-declare module "grpc" {
-  import { Message, Service as ProtobufService } from "protobufjs";
+declare module "@elastisim/grpc" {
+  import { Message, Service as ProtobufService } from "@elastisim/protobufjs";
   import { Duplex, Readable, Writable } from "stream";
   import { SecureContext } from "tls";
 
@@ -445,6 +445,9 @@ declare module "grpc" {
      * @param responseMetadata Metadata to send
      */
     sendMetadata(responseMetadata: Metadata): void;
+
+    on(event:"data", listener:(data:RequestType) => void): this;
+    on(event:"close" | "readable" | "end" | "error", listener:(...any:any[]) => void): this;
   }
 
   /**
