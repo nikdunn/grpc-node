@@ -1,6 +1,6 @@
 {
   "name": "@elastisim/grpc",
-  "version": "1.15.2",
+  "version": "1.15.3",
   "author": "Google Inc.",
   "description": "gRPC Library for Node",
   "homepage": "https://grpc.io/",
@@ -53,7 +53,7 @@
   "binary": {
     "module_name": "grpc_node",
     "module_path": "src/node/extension_binary/{node_abi}-{platform}-{arch}-{libc}",
-    "host": "http://ste-irad-devsvr:8081/",
+    "host": "https://ste-irad-devsvr:8081/",
     "remote_path": "{name}/v{version}",
     "package_name": "{node_abi}-{platform}-{arch}-{libc}.tar.gz"
   },
