@@ -368,6 +368,9 @@ declare module "@elastisim/grpc" {
      * @param responseMetadata Metadata to send
      */
     sendMetadata(responseMetadata: Metadata): void;
+
+    on(event:"data", listener:(data:RequestType) => void): this;
+    on(event:"close" | "readable" | "end" | "error", listener:(...any:any[]) => void): this;
   }
 
   /**
@@ -1207,6 +1210,9 @@ declare module "@elastisim/grpc" {
      * @return The URI of the endpoint
      */
     getPeer(): string;
+
+    on(event:"data", listener:(data:ResponseType) => void): this;
+    on(event:"close" | "readable" | "end" | "error", listener:(...any:any[]) => void): this;
   }
 
   /**
