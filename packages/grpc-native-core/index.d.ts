@@ -377,13 +377,13 @@ declare module "@elastisim/grpc" {
    * User provided method to handle server streaming methods on the server.
    */
   type handleServerStreamingCall<RequestType, ResponseType> =
-    (call: ServerWriteableStream<RequestType>) => void;
+    (call: ServerWriteableStream<RequestType, ResponseType>) => void;
 
   /**
    * A stream that the server can write to. Used for calls that are streaming
    * from the server side.
    */
-  export class ServerWriteableStream<RequestType> extends Writable {
+  export class ServerWriteableStream<RequestType,ResponseType> extends Writable {
     /**
      * Indicates if the call has been cancelled
      */
@@ -412,6 +412,9 @@ declare module "@elastisim/grpc" {
      * @param responseMetadata Metadata to send
      */
     sendMetadata(responseMetadata: Metadata): void;
+
+    write(chunk: ResponseType, cb?: (error: Error | null | undefined) => void): boolean;
+    write(chunk: ResponseType, encoding?: string, cb?: (error: Error | null | undefined) => void): boolean;
   }
 
   /**
@@ -451,6 +454,9 @@ declare module "@elastisim/grpc" {
 
     on(event:"data", listener:(data:RequestType) => void): this;
     on(event:"close" | "readable" | "end" | "error", listener:(...any:any[]) => void): this;
+
+    write(chunk: ResponseType, cb?: (error: Error | null | undefined) => void): boolean;
+    write(chunk: ResponseType, encoding?: string, cb?: (error: Error | null | undefined) => void): boolean;
   }
 
   /**
@@ -1275,6 +1281,9 @@ declare module "@elastisim/grpc" {
      * @return The URI of the endpoint
      */
     getPeer(): string;
+    
+    on(event:"data", listener:(data:ResponseType) => void): this;
+    on(event:"close" | "readable" | "end" | "error", listener:(...any:any[]) => void): this;
   }
 
   /**
