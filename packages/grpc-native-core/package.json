@@ -1,6 +1,6 @@
 {
   "name": "@elastisim/grpc",
-  "version": "1.15.6",
+  "version": "1.15.7",
   "author": "Google Inc.",
   "description": "gRPC Library for Node",
   "homepage": "https://grpc.io/",
